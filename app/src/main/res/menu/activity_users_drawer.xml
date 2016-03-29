@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <group android:checkableBehavior="single">
+        <item
+            android:id="@+id/nav_gyuri"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Gyuri" />
+        <item
+            android:id="@+id/nav_laci"
+            android:icon="@drawable/ic_menu_send"
+            android:title="Laci" />
+
+    </group>
+
+    <item android:title="Log">
+        <menu>
+            <item
+                android:id="@+id/nav_purchases"
+                android:icon="@drawable/ic_menu_manage"
+                android:title="Purchases" />
+        </menu>
+    </item>
+
+</menu>
