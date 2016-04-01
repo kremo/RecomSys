@@ -8,7 +8,8 @@ import java.util.LinkedHashMap;
  */
 public class RecomGroup {
     String name;
-    LinkedHashMap<Book, Integer> books;
+    LinkedHashMap<Book, Integer> books = new LinkedHashMap<>();
+    private ArrayList<User> users = new ArrayList<>();
 
     public RecomGroup(String m){
         name = m;
@@ -17,5 +18,13 @@ public class RecomGroup {
 
     public String getName() {
         return name;
+    }
+
+    public void addUser(User user){
+        users.add(user);
+    }
+
+    public void addBook(Book book, int i) {
+        books.put(book,i);
     }
 }

@@ -2,7 +2,6 @@ package com.example.gyuri.recomsys;
 
 import android.content.Context;
 import android.os.Bundle;
-import android.os.Environment;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
@@ -10,29 +9,36 @@ import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.ViewGroup;
+import android.widget.ImageButton;
+import android.widget.LinearLayout;
+import android.widget.TextView;
 
+import com.example.gyuri.recomsys.model.Book;
 import com.example.gyuri.recomsys.model.RecomGroup;
+import com.example.gyuri.recomsys.model.User;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
-import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
-import java.util.List;
 
 public class UsersActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    ArrayList<RecomGroup> recomGroups;
+    private static final int ALL_BOOKS = 1;
+    User currentUser;
+    ArrayList<RecomGroup> recomGroups = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -50,6 +56,111 @@ public class UsersActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+
+        createExampleShelves();
+
+        readGson();
+
+        createAllBooksShelf();
+
+    }
+
+    private void createAllBooksShelf() {
+        LayoutInflater li = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        ViewGroup grouplist = (ViewGroup) findViewById(R.id.groups_linear_layout);
+        ViewGroup shelf = (ViewGroup) li.inflate(R.layout.shelf_layout, null);
+        ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
+        LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
+
+        RecomGroup rg = new RecomGroup("allBooks");
+        rg.addUser(new User("Katona György", 1000001, "Gyuri", 22));
+
+        for (int i = 1; i < ALL_BOOKS + 1; i++) {
+            try {
+                InputStream in = this.getAssets().open("book" + Integer.toString(i) + ".txt");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String title = reader.readLine();
+                String author = reader.readLine();
+                String released = reader.readLine();
+                String publisher = reader.readLine();
+                int price = Integer.parseInt(reader.readLine());
+                ArrayList<String> genres = new ArrayList<>();
+                String line = reader.readLine();
+                while (line != null) {
+                    genres.add(line);
+                    line = reader.readLine();
+                }
+
+                reader.close();
+
+                LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, books);
+                ((TextView) ((LinearLayout) book.getChildAt(0)).getChildAt(1)).setText(title);
+                ((TextView) ((LinearLayout) book.getChildAt(0)).getChildAt(2)).setText(author);
+                int resID = getResources().getIdentifier("book" + Integer.toString(i), "drawable", getPackageName());
+                ((ImageButton) ((LinearLayout) book.getChildAt(0)).getChildAt(0)).setImageResource(resID);
+
+                rg.addBook(new Book(title, author, released, publisher, price, genres), 0);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+
+        }
+
+        recomGroups.add(rg);
+
+        bookslist.addView(books);
+        shelf.addView(bookslist);
+        grouplist.addView(shelf);
+    }
+
+    private void createExampleShelves() {
+        LayoutInflater li = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        ViewGroup grouplist = (ViewGroup) findViewById(R.id.groups_linear_layout);
+
+        ViewGroup shelf = (ViewGroup) li.inflate(R.layout.shelf_layout, null);
+        ViewGroup shelf2 = (ViewGroup) li.inflate(R.layout.shelf_layout, null);
+
+        ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
+        ViewGroup bookslist2 = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
+
+
+        LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
+
+        LinearLayout books2 = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
+
+
+        LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, books);
+        LinearLayout book2 = (LinearLayout) li.inflate(R.layout.book_layout, books);
+        LinearLayout book3 = (LinearLayout) li.inflate(R.layout.book_layout, books);
+        LinearLayout book4 = (LinearLayout) li.inflate(R.layout.book_layout, books);
+        LinearLayout book5 = (LinearLayout) li.inflate(R.layout.book_layout, books);
+        LinearLayout book6 = (LinearLayout) li.inflate(R.layout.book_layout, books);
+
+
+        LinearLayout book7 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
+        LinearLayout book8 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
+        LinearLayout book9 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
+        LinearLayout book10 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
+        LinearLayout book11 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
+        LinearLayout book12 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
+
+        bookslist.addView(books);
+        shelf.addView(bookslist);
+        grouplist.addView(shelf);
+
+
+        bookslist2.addView(books2);
+        shelf2.addView(bookslist2);
+        grouplist.addView(shelf2);
+
+
     }
 
 
@@ -100,8 +211,8 @@ public class UsersActivity extends AppCompatActivity
             Type listOfRecomGroupObject = new TypeToken<ArrayList<RecomGroup>>() {
             }.getType();
             String json = sb.toString();
-            Log.d("JSON: ", json);
 
+            Log.d("JSON: ", json);
             //first run
             if (json.equals("null")) {
                 recomGroups = new ArrayList<>();
@@ -167,10 +278,14 @@ public class UsersActivity extends AppCompatActivity
         int id = item.getItemId();
 
         if (id == R.id.nav_gyuri) {
-            // Handle the camera action
+            //egyik lista
+
+
         } else if (id == R.id.nav_laci) {
+            //másik lista
 
         } else if (id == R.id.nav_purchases) {
+            //összes vásárlás
 
         }
 
