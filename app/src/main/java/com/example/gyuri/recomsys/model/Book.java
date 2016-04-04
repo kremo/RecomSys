@@ -1,25 +1,34 @@
 package com.example.gyuri.recomsys.model;
 
+import android.util.Log;
+
 import java.util.ArrayList;
 
 /**
  * Created by Gyuri on 2016. 03. 29..
  */
 public class Book {
+    private final String bookArraySeparator = "-#Bok#-";
+
     private String title;
     private String author;
-    private String released;
+    private int released;
     private String publisher;
     private int price;
-    private ArrayList<String> genres;
+    private ArrayList<String> genres = new ArrayList<>();
 
-    public Book(String title, String author, String released, String publisher, int price, ArrayList<String> genres) {
+
+    public Book(String title, String author, int released, String publisher, int price, ArrayList<String> genres) {
         this.title = title;
         this.author = author;
         this.released = released;
         this.publisher = publisher;
         this.price = price;
         this.genres = genres;
+    }
+
+    public Book(String saved) {
+        this.readFromString(saved);
     }
 
     public String getTitle() {
@@ -38,11 +47,11 @@ public class Book {
         this.author = author;
     }
 
-    public String getReleased() {
+    public int getReleased() {
         return released;
     }
 
-    public void setReleased(String released) {
+    public void setReleased(int released) {
         this.released = released;
     }
 
@@ -68,5 +77,34 @@ public class Book {
 
     public void setGenres(ArrayList<String> genres) {
         this.genres = genres;
+    }
+
+    public String writeToString() {
+        String str = new String();
+
+        str = str.concat(title + "\n");
+        str = str.concat(author + "\n");
+        str = str.concat(Integer.toString(released) + "\n");
+        str = str.concat(publisher + "\n");
+        str = str.concat(Integer.toString(price) + "\n");
+        for (String actual : genres) {
+            str = str.concat(actual + bookArraySeparator);
+        }
+        return str;
+    }
+
+    public void readFromString(String str) {
+        String[] strings = str.split("\n");
+        title = strings[0];
+        author = strings[1];
+        released = Integer.parseInt(strings[2]);
+        publisher = strings[3];
+        price = Integer.parseInt(strings[4]);
+
+        String[] gs = strings[5].split(bookArraySeparator);
+        for (String actual : gs) {
+            genres.add(actual);
+        }
+
     }
 }

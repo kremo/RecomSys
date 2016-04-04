@@ -36,7 +36,7 @@ import java.util.ArrayList;
 public class UsersActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
-    private static final int ALL_BOOKS = 1;
+    private static final int ALL_BOOKS = 50;
     User currentUser;
     ArrayList<RecomGroup> recomGroups = new ArrayList<>();
 
@@ -60,11 +60,28 @@ public class UsersActivity extends AppCompatActivity
 
         createExampleShelves();
 
-        readGson();
+
+        //readGson();
 
         createAllBooksShelf();
 
+
     }
+
+    private void writeBook(Book b) {
+        String s = b.writeToString();
+        Log.d("BOOK", s);
+        Book b2 = new Book(s);
+        Log.d("BOOK2", b2.getAuthor() + b2.getPublisher() + b2.getGenres());
+    }
+
+    private void writeRecomGroup(RecomGroup rg) {
+        String s = rg.writeToString();
+        Log.d("RECG", s);
+        Book b2 = new Book(s);
+        Log.d("RECG", rg.getName());
+    }
+
 
     private void createAllBooksShelf() {
         LayoutInflater li = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
@@ -83,7 +100,7 @@ public class UsersActivity extends AppCompatActivity
                 BufferedReader reader = new BufferedReader(new InputStreamReader(in));
                 String title = reader.readLine();
                 String author = reader.readLine();
-                String released = reader.readLine();
+                int released = Integer.parseInt(reader.readLine());
                 String publisher = reader.readLine();
                 int price = Integer.parseInt(reader.readLine());
                 ArrayList<String> genres = new ArrayList<>();
@@ -95,19 +112,38 @@ public class UsersActivity extends AppCompatActivity
 
                 reader.close();
 
-                LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, books);
-                ((TextView) ((LinearLayout) book.getChildAt(0)).getChildAt(1)).setText(title);
-                ((TextView) ((LinearLayout) book.getChildAt(0)).getChildAt(2)).setText(author);
+                LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, null);
+                ((TextView) book.getChildAt(1)).setText(title);
+                ((TextView) book.getChildAt(2)).setText(author);
                 int resID = getResources().getIdentifier("book" + Integer.toString(i), "drawable", getPackageName());
-                ((ImageButton) ((LinearLayout) book.getChildAt(0)).getChildAt(0)).setImageResource(resID);
+                ((ImageButton) book.getChildAt(0)).setImageResource(resID);
 
-                rg.addBook(new Book(title, author, released, publisher, price, genres), 0);
+                books.addView(book);
+
+                //rg.addBook(new Book(title, author, released, publisher, price, genres), 0);
+                //writeBook(new Book(title, author, released, publisher, price, genres));
+
+
+                RecomGroup recg = new RecomGroup("test");
+                Book b = new Book(title, author, released, publisher, price, genres);
+                Book b2 = new Book(title + "2", author, released, publisher, price, genres);
+
+                recg.addBook(b, 0);
+                recg.addBook(b2, 2);
+
+                User u = new User("Katona György", 1000001, "Gyuri", 22);
+                User u2 = new User("Katona Aladár", 1000023, "Gyuri", 22);
+
+                recg.addUser(u);
+                recg.addUser(u2);
+
+
+                writeRecomGroup(recg);
 
 
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
 
 
         }
@@ -167,7 +203,7 @@ public class UsersActivity extends AppCompatActivity
     @Override
     protected void onStart() {
         super.onStart();
-        readGson();
+        // readGson();
     }
 
     private void logRecomGroups() {
