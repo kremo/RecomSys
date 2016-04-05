@@ -10,7 +10,6 @@
         android:layout_width="80dp"
         android:layout_height="120dp"
         android:id="@+id/book_imageButton"
-        android:background="@drawable/varjak"
         android:scaleType="fitStart"/>
     <TextView
         android:id="@+id/title_textview"

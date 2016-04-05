@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.gyuri.recomsys.model.Book;
@@ -32,6 +33,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 public class UsersActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
@@ -39,6 +42,8 @@ public class UsersActivity extends AppCompatActivity
     private static final int ALL_BOOKS = 50;
     User currentUser;
     ArrayList<RecomGroup> recomGroups = new ArrayList<>();
+    ArrayList<User> users = new ArrayList<>();
+    RecomGroup allBooks = new RecomGroup("Minden Könyv");
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,13 +63,79 @@ public class UsersActivity extends AppCompatActivity
         navigationView.setNavigationItemSelectedListener(this);
 
 
-        createExampleShelves();
+        //createExampleShelves();
 
-
-        //readGson();
 
         createAllBooksShelf();
 
+
+        currentUser = new User("Katona György", 1000001, "Gyuri", 22);
+        users.add(new User("Kovács László", 1000002, "Laci", 24));
+        users.add(currentUser);
+
+        //create recomGroups for testing
+        RecomGroup rg = new RecomGroup("Humoros");
+        List<Book> l = new ArrayList<>(allBooks.getBooks().keySet());
+
+        rg.addBook(l.get(0), 5);
+        rg.addBook(l.get(1),6);
+        rg.addBook(l.get(2),2);
+        rg.addBook(l.get(3),4);
+        rg.addBook(l.get(4),3);
+        rg.addBook(l.get(5), 1);
+        rg.addUser(currentUser);
+        recomGroups.add(rg);
+
+
+
+        RecomGroup rg2 = new RecomGroup("Krimi");
+
+
+
+
+        createShelvesForUser(currentUser);
+
+    }
+
+    private void createShelvesForUser(User currentUser) {
+        for (RecomGroup rg : recomGroups) {
+            if (rg.getUsers().contains(currentUser))
+                createShelf(rg);
+        }
+    }
+
+    private void createShelf(RecomGroup rg) {
+        LayoutInflater li = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
+
+        ViewGroup grouplist = (ViewGroup) findViewById(R.id.groups_linear_layout);
+        ViewGroup shelf = (ViewGroup) li.inflate(R.layout.shelf_layout, null);
+        ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
+        LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
+
+        Book[] bestBooks = new Book[5];
+        rg.sortByValue();
+        List<Book> l = new ArrayList<>(rg.getBooks().keySet());
+        for (int i = 0; i < 5; i++) {
+            bestBooks[i] = l.get(i);
+        }
+
+
+        for (Book b : bestBooks) {
+            LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, null);
+            ((TextView) book.getChildAt(1)).setText(b.getTitle());
+            ((TextView) book.getChildAt(2)).setText(b.getAuthor());
+            int resID = getResources().getIdentifier(b.getPicture(), "drawable", getPackageName());
+            ((ImageButton) book.getChildAt(0)).setImageResource(resID);
+
+
+            books.addView(book);
+        }
+
+        bookslist.addView(books);
+        shelf.addView(bookslist);
+        grouplist.addView(shelf);
+
+        ((TextView)((RelativeLayout)shelf.getChildAt(0)).getChildAt(0)).setText(rg.getName());
 
     }
 
@@ -91,8 +162,9 @@ public class UsersActivity extends AppCompatActivity
         ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
         LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
 
-        RecomGroup rg = new RecomGroup("allBooks");
+        RecomGroup rg = new RecomGroup("Minden könyv");
         rg.addUser(new User("Katona György", 1000001, "Gyuri", 22));
+
 
         for (int i = 1; i < ALL_BOOKS + 1; i++) {
             try {
@@ -119,26 +191,9 @@ public class UsersActivity extends AppCompatActivity
                 ((ImageButton) book.getChildAt(0)).setImageResource(resID);
 
                 books.addView(book);
+                ((TextView)((RelativeLayout)shelf.getChildAt(0)).getChildAt(0)).setText(rg.getName());
+                rg.addBook(new Book(title, author, released, publisher, price,"book" + Integer.toString(i), genres), 0);
 
-                //rg.addBook(new Book(title, author, released, publisher, price, genres), 0);
-                //writeBook(new Book(title, author, released, publisher, price, genres));
-
-
-                RecomGroup recg = new RecomGroup("test");
-                Book b = new Book(title, author, released, publisher, price, genres);
-                Book b2 = new Book(title + "2", author, released, publisher, price, genres);
-
-                recg.addBook(b, 0);
-                recg.addBook(b2, 2);
-
-                User u = new User("Katona György", 1000001, "Gyuri", 22);
-                User u2 = new User("Katona Aladár", 1000023, "Gyuri", 22);
-
-                recg.addUser(u);
-                recg.addUser(u2);
-
-
-                writeRecomGroup(recg);
 
 
             } catch (IOException e) {
@@ -149,6 +204,8 @@ public class UsersActivity extends AppCompatActivity
         }
 
         recomGroups.add(rg);
+
+        allBooks = rg;
 
         bookslist.addView(books);
         shelf.addView(bookslist);

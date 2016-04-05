@@ -2,7 +2,11 @@ package com.example.gyuri.recomsys.model;
 
 import java.lang.reflect.Array;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Created by Gyuri on 2016. 03. 29..
@@ -13,7 +17,44 @@ public class RecomGroup {
 
 
     String name;
-    LinkedHashMap<Book, Integer> books = new LinkedHashMap<>();
+
+    public void sortByValue() {
+
+        final Comparator<Integer> c = new Comparator<Integer>() {
+            @Override
+            public int compare(Integer lhs, Integer rhs) {
+                return lhs - rhs;
+            }
+
+            @Override
+            public boolean equals(Object object) {
+                return this.equals(object);
+            }
+        };
+        List<Map.Entry<Book, Integer>> entries = new ArrayList<>(books.entrySet());
+
+        Collections.sort(entries, new Comparator<Map.Entry<Book, Integer>>() {
+            @Override
+            public int compare(Map.Entry<Book, Integer> lhs, Map.Entry<Book, Integer> rhs) {
+                return c.compare(lhs.getValue(), rhs.getValue());
+            }
+        });
+
+        books.clear();
+        for (Map.Entry<Book, Integer> e : entries) {
+            books.put(e.getKey(), e.getValue());
+        }
+    }
+
+    public LinkedHashMap<Book, Integer> getBooks() {
+        return books;
+    }
+
+    public void setBooks(LinkedHashMap<Book, Integer> books) {
+        this.books = books;
+    }
+
+    private LinkedHashMap<Book, Integer> books = new LinkedHashMap<>();
     private ArrayList<User> users = new ArrayList<>();
 
     public RecomGroup(String m) {
@@ -23,6 +64,14 @@ public class RecomGroup {
 
     public String getName() {
         return name;
+    }
+
+    public ArrayList<User> getUsers() {
+        return users;
+    }
+
+    public void setUsers(ArrayList<User> users) {
+        this.users = users;
     }
 
     public void addUser(User user) {
@@ -43,7 +92,7 @@ public class RecomGroup {
         }
         str = str.concat(recomGObjectSeparator);
 
-        for(User u : users){
+        for (User u : users) {
             str = str.concat(u.writeToString() + recomGArraySeparator);
         }
 
@@ -55,13 +104,13 @@ public class RecomGroup {
         name = strings[0];
         String[] booksArr = strings[1].split(recomGArraySeparator);
         for (String actual : booksArr) {
-            String [] bookWithRank = actual.split(":");
+            String[] bookWithRank = actual.split(":");
             Book book = new Book(bookWithRank[0]);
             Integer rank = Integer.parseInt(bookWithRank[1]);
             books.put(book, rank);
         }
         String[] usersArr = strings[2].split(recomGArraySeparator);
-        for(String actual : usersArr){
+        for (String actual : usersArr) {
             users.add(new User(actual));
         }
 
