@@ -7,16 +7,25 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 /**
  * Created by Gyuri on 2016. 03. 29..
  */
 public class RecomGroup {
-    String recomGObjectSeparator = "-+-||-+-";
-    String recomGArraySeparator = "-+-|A|-+-";
+    public static String recomGObjectSeparator = "-|f|-";
+    public static String recomGArraySeparator = "-|B|-";
 
 
     String name;
+
+    public RecomGroup() {
+
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public void sortByValue() {
 
@@ -44,6 +53,7 @@ public class RecomGroup {
         for (Map.Entry<Book, Integer> e : entries) {
             books.put(e.getKey(), e.getValue());
         }
+
     }
 
     public LinkedHashMap<Book, Integer> getBooks() {
@@ -58,7 +68,8 @@ public class RecomGroup {
     private ArrayList<User> users = new ArrayList<>();
 
     public RecomGroup(String m) {
-        name = m;
+
+        this.readFromString(m);
     }
 
 
@@ -79,6 +90,8 @@ public class RecomGroup {
     }
 
     public void addBook(Book book, int i) {
+        if (books.containsKey(book))
+            books.put(book, books.get(book) + 1);
         books.put(book, i);
     }
 
@@ -100,16 +113,16 @@ public class RecomGroup {
     }
 
     public void readFromString(String str) {
-        String[] strings = str.split(recomGObjectSeparator);
+        String[] strings = str.split(Pattern.quote(recomGObjectSeparator));
         name = strings[0];
-        String[] booksArr = strings[1].split(recomGArraySeparator);
+        String[] booksArr = strings[1].split(Pattern.quote(recomGArraySeparator));
         for (String actual : booksArr) {
-            String[] bookWithRank = actual.split(":");
+            String[] bookWithRank = actual.split(Pattern.quote(":"));
             Book book = new Book(bookWithRank[0]);
             Integer rank = Integer.parseInt(bookWithRank[1]);
             books.put(book, rank);
         }
-        String[] usersArr = strings[2].split(recomGArraySeparator);
+        String[] usersArr = strings[2].split(Pattern.quote(recomGArraySeparator));
         for (String actual : usersArr) {
             users.add(new User(actual));
         }

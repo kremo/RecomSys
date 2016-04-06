@@ -3,12 +3,14 @@ package com.example.gyuri.recomsys.model;
 import android.util.Log;
 
 import java.util.ArrayList;
+import java.util.regex.Pattern;
 
 /**
  * Created by Gyuri on 2016. 03. 29..
  */
 public class Book {
-    private final String bookArraySeparator = "-#Bok#-";
+    private static final String bookArraySeparator = "-#BA#-";
+    private static final String bookObjectSeparator = "-#BO#-";
 
     private String title;
     private String author;
@@ -93,12 +95,12 @@ public class Book {
     public String writeToString() {
         String str = new String();
 
-        str = str.concat(title + "\n");
-        str = str.concat(author + "\n");
-        str = str.concat(Integer.toString(released) + "\n");
-        str = str.concat(publisher + "\n");
-        str = str.concat(Integer.toString(price) + "\n");
-        str = str.concat(picture + "\n");
+        str = str.concat(title + bookObjectSeparator);
+        str = str.concat(author + bookObjectSeparator);
+        str = str.concat(Integer.toString(released) + bookObjectSeparator);
+        str = str.concat(publisher + bookObjectSeparator);
+        str = str.concat(Integer.toString(price) + bookObjectSeparator);
+        str = str.concat(picture + bookObjectSeparator);
         for (String actual : genres) {
             str = str.concat(actual + bookArraySeparator);
         }
@@ -106,13 +108,15 @@ public class Book {
     }
 
     public void readFromString(String str) {
-        String[] strings = str.split("\n");
+        Log.d("BOOKSTR",str);
+
+        String[] strings = str.split(Pattern.quote(bookObjectSeparator));
         title = strings[0];
         author = strings[1];
         released = Integer.parseInt(strings[2]);
         publisher = strings[3];
         price = Integer.parseInt(strings[4]);
-        publisher = strings[5];
+        picture = strings[5];
 
         String[] gs = strings[6].split(bookArraySeparator);
         for (String actual : gs) {
@@ -120,4 +124,6 @@ public class Book {
         }
 
     }
+
+
 }

@@ -1,6 +1,7 @@
 package com.example.gyuri.recomsys;
 
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
 import android.support.v4.view.GravityCompat;
@@ -12,6 +13,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
@@ -19,10 +21,9 @@ import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.example.gyuri.recomsys.model.Book;
+import com.example.gyuri.recomsys.model.Purchase;
 import com.example.gyuri.recomsys.model.RecomGroup;
 import com.example.gyuri.recomsys.model.User;
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
 
 import java.io.BufferedReader;
 import java.io.FileInputStream;
@@ -31,19 +32,23 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
+import java.util.regex.Pattern;
 
 public class UsersActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
 
+    final String arraySeparator = "[!-_-!]";
+
     private static final int ALL_BOOKS = 50;
-    User currentUser;
-    ArrayList<RecomGroup> recomGroups = new ArrayList<>();
-    ArrayList<User> users = new ArrayList<>();
-    RecomGroup allBooks = new RecomGroup("Minden Könyv");
+    public static User currentUser;
+    public static ArrayList<RecomGroup> recomGroups = new ArrayList<>();
+    public static ArrayList<User> users = new ArrayList<>();
+    public static ArrayList<Purchase> purchases = new ArrayList<>();
+    public static boolean changed = false;
+    static boolean firstrun = true;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -65,42 +70,52 @@ public class UsersActivity extends AppCompatActivity
 
         //createExampleShelves();
 
+        if (changed) {
+            writeToFiles();
+            changed = false;
+            Log.d("OK", "IM HERE");
+        }
 
-        createAllBooksShelf();
+        readFromFiles();
 
+        if (users.size() == 0) {
+            users.add(new User("Kovács László", 1000002, "Laci", 24));
+            users.add(new User("Katona György", 1000001, "Gyuri", 22));
+            writeToFiles();
+        }
 
-        currentUser = new User("Katona György", 1000001, "Gyuri", 22);
-        users.add(new User("Kovács László", 1000002, "Laci", 24));
-        users.add(currentUser);
-
-        //create recomGroups for testing
-        RecomGroup rg = new RecomGroup("Humoros");
-        List<Book> l = new ArrayList<>(allBooks.getBooks().keySet());
-
-        rg.addBook(l.get(0), 5);
-        rg.addBook(l.get(1),6);
-        rg.addBook(l.get(2),2);
-        rg.addBook(l.get(3),4);
-        rg.addBook(l.get(4),3);
-        rg.addBook(l.get(5), 1);
-        rg.addUser(currentUser);
-        recomGroups.add(rg);
+        for (User u : users) {
+            if (u.getNickName().equals("Gyuri"))
+                currentUser = u;
+        }
 
 
+        if (recomGroups.size() == 0) {
+            createAllBooksRecomGroup();
+            writeToFiles();
+        }
 
-        RecomGroup rg2 = new RecomGroup("Krimi");
+        createShelvesForUser();
 
-
-
-
-        createShelvesForUser(currentUser);
 
     }
 
-    private void createShelvesForUser(User currentUser) {
+
+    private void createShelvesForUser() {
+        ViewGroup grouplist = (ViewGroup) findViewById(R.id.groups_linear_layout);
+        assert grouplist != null;
+        grouplist.removeAllViews();
+        for (int i = 0; i < recomGroups.size(); i++)
+            if (recomGroups.get(i).getName().equals("Minden Könyv"))
+                if (i != (recomGroups.size() - 1)) {
+                    recomGroups.add(recomGroups.get(i));
+                    recomGroups.remove(i);
+                }
         for (RecomGroup rg : recomGroups) {
-            if (rg.getUsers().contains(currentUser))
+            if (rg.getUsers().contains(currentUser)) {
                 createShelf(rg);
+                Log.d("CSINÁLOM", "end");
+            }
         }
     }
 
@@ -112,58 +127,49 @@ public class UsersActivity extends AppCompatActivity
         ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
         LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
 
-        Book[] bestBooks = new Book[5];
+        int arraySize = rg.getBooks().size() < 5 ? rg.getBooks().size() : 5;
+        Book[] bestBooks = new Book[arraySize];
         rg.sortByValue();
         List<Book> l = new ArrayList<>(rg.getBooks().keySet());
-        for (int i = 0; i < 5; i++) {
+        for (int i = 0; i < arraySize; i++) {
             bestBooks[i] = l.get(i);
         }
 
 
-        for (Book b : bestBooks) {
+        for (final Book b : bestBooks) {
             LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, null);
             ((TextView) book.getChildAt(1)).setText(b.getTitle());
             ((TextView) book.getChildAt(2)).setText(b.getAuthor());
             int resID = getResources().getIdentifier(b.getPicture(), "drawable", getPackageName());
             ((ImageButton) book.getChildAt(0)).setImageResource(resID);
 
-
+            View.OnClickListener ocl = new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(UsersActivity.this, PurchaseBookActivity.class);
+                    intent.putExtra("BOOK", b.writeToString());
+                    startActivity(intent);
+                }
+            };
             books.addView(book);
+            book.setOnClickListener(ocl);
+            ((ImageButton) book.getChildAt(0)).setOnClickListener(ocl);
         }
 
         bookslist.addView(books);
         shelf.addView(bookslist);
         grouplist.addView(shelf);
 
-        ((TextView)((RelativeLayout)shelf.getChildAt(0)).getChildAt(0)).setText(rg.getName());
+        ((TextView) ((RelativeLayout) shelf.getChildAt(0)).getChildAt(0)).setText(rg.getName());
 
     }
 
-    private void writeBook(Book b) {
-        String s = b.writeToString();
-        Log.d("BOOK", s);
-        Book b2 = new Book(s);
-        Log.d("BOOK2", b2.getAuthor() + b2.getPublisher() + b2.getGenres());
-    }
 
-    private void writeRecomGroup(RecomGroup rg) {
-        String s = rg.writeToString();
-        Log.d("RECG", s);
-        Book b2 = new Book(s);
-        Log.d("RECG", rg.getName());
-    }
+    private void createAllBooksRecomGroup() {
 
 
-    private void createAllBooksShelf() {
-        LayoutInflater li = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        ViewGroup grouplist = (ViewGroup) findViewById(R.id.groups_linear_layout);
-        ViewGroup shelf = (ViewGroup) li.inflate(R.layout.shelf_layout, null);
-        ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
-        LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
-
-        RecomGroup rg = new RecomGroup("Minden könyv");
-        rg.addUser(new User("Katona György", 1000001, "Gyuri", 22));
+        RecomGroup rg = new RecomGroup();
+        rg.setName("Minden könyv");
 
 
         for (int i = 1; i < ALL_BOOKS + 1; i++) {
@@ -184,16 +190,7 @@ public class UsersActivity extends AppCompatActivity
 
                 reader.close();
 
-                LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, null);
-                ((TextView) book.getChildAt(1)).setText(title);
-                ((TextView) book.getChildAt(2)).setText(author);
-                int resID = getResources().getIdentifier("book" + Integer.toString(i), "drawable", getPackageName());
-                ((ImageButton) book.getChildAt(0)).setImageResource(resID);
-
-                books.addView(book);
-                ((TextView)((RelativeLayout)shelf.getChildAt(0)).getChildAt(0)).setText(rg.getName());
-                rg.addBook(new Book(title, author, released, publisher, price,"book" + Integer.toString(i), genres), 0);
-
+                rg.addBook(new Book(title, author, released, publisher, price, "book" + Integer.toString(i), genres), 0);
 
 
             } catch (IOException e) {
@@ -202,14 +199,24 @@ public class UsersActivity extends AppCompatActivity
 
 
         }
+        boolean gotIt = false;
+        for (RecomGroup recomGroup : recomGroups)
+            if (recomGroup.getName().equals("Minden könyv"))
+                gotIt = true;
 
-        recomGroups.add(rg);
+        if (!gotIt) {
+            for (User u : users)
+                rg.addUser(u);
+            recomGroups.add(rg);
+        }
+    }
 
-        allBooks = rg;
+    @Override
+    protected void onRestart() {
+        super.onRestart();
+        writeToFiles();
+        createShelvesForUser();
 
-        bookslist.addView(books);
-        shelf.addView(bookslist);
-        grouplist.addView(shelf);
     }
 
     private void createExampleShelves() {
@@ -259,8 +266,130 @@ public class UsersActivity extends AppCompatActivity
 
     @Override
     protected void onStart() {
+        if (changed) {
+            writeToFiles();
+            changed = false;
+        }
         super.onStart();
-        // readGson();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+    }
+
+    private void readFromFiles() {
+
+
+        readRecomGroups();
+        readUsers();
+        readPurchases();
+
+
+    }
+
+    private void readPurchases() {
+        FileInputStream fis = null;
+
+        try {
+            fis = openFileInput("purchases.txt");
+
+
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            String all = sb.toString();
+
+            Log.d("READFILE/PURCHASES", "+" + all + "+");
+            purchases.clear();
+            String[] ps = all.split(Pattern.quote(arraySeparator));
+            for (String str : ps) {
+                if (str.length() > 0)
+                    purchases.add(new Purchase(str));
+            }
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void readRecomGroups() {
+        FileInputStream fis = null;
+
+        try {
+            fis = openFileInput("recomGroups.txt");
+
+
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            String all = new String();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                all = all.concat(line);
+            }
+            bufferedReader.close();
+
+
+            Log.d("READFILE/RECOMGROUPS", all);
+
+            String[] rgs = all.split(Pattern.quote(arraySeparator));
+
+            recomGroups.clear();
+            for (String str : rgs) {
+                if (str.length() > 0) {
+                    RecomGroup rg = new RecomGroup(str);
+                    recomGroups.add(rg);
+                    Log.d("RGREAD", rg.getName());
+                }
+            }
+
+        } catch (FileNotFoundException e1) {
+            e1.printStackTrace();
+        } catch (IOException e1) {
+            e1.printStackTrace();
+        }
+
+    }
+
+
+    private void readUsers() {
+        FileInputStream fis = null;
+
+        try {
+            fis = openFileInput("users.txt");
+
+
+            InputStreamReader isr = new InputStreamReader(fis);
+            BufferedReader bufferedReader = new BufferedReader(isr);
+            StringBuilder sb = new StringBuilder();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                sb.append(line);
+            }
+            String all = sb.toString();
+
+            Log.d("READFILE/USERS", all);
+
+            users.clear();
+            String[] us = all.split(Pattern.quote(arraySeparator));
+            for (String str : us)
+                if (str.length() > 0)
+                    users.add(new User(str));
+
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     private void logRecomGroups() {
@@ -270,66 +399,78 @@ public class UsersActivity extends AppCompatActivity
 
     @Override
     protected void onStop() {
-        writeGson();
+        writeToFiles();
         super.onStop();
     }
 
-    private void writeGson() {
-        Gson gson = new Gson();
-        String s = gson.toJson(recomGroups);
+    public void writeToFiles() {
 
-        FileOutputStream outputStream;
+        Log.d("WRITEFILE", "START");
 
+        Log.d("RGS", "start");
+        for (RecomGroup recg : UsersActivity.recomGroups)
+            Log.d("RGS", recg.getName());
+        Log.d("RGS", "end");
+
+        writeRecomGroups();
+
+        writeUsers();
+
+        writePurchases();
+
+        Log.d("WRITEFILE", "END");
+
+    }
+
+    private void writePurchases() {
+        String str = new String();
+        for (Purchase p : purchases) {
+            str = str.concat(p.writeToString() + arraySeparator);
+        }
         try {
+            FileOutputStream outputStream;
+            outputStream = openFileOutput("purchases.txt", Context.MODE_PRIVATE);
+            outputStream.write(str.getBytes());
+            outputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeUsers() {
+        String str = new String();
+        for (User u : users) {
+            str = str.concat(u.writeToString() + arraySeparator);
+        }
+        try {
+            FileOutputStream outputStream;
+            outputStream = openFileOutput("users.txt", Context.MODE_PRIVATE);
+            outputStream.write(str.getBytes());
+            outputStream.close();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void writeRecomGroups() {
+        String str = new String();
+        for (RecomGroup rg : recomGroups) {
+            str = str.concat(rg.writeToString() + arraySeparator);
+        }
+
+        Log.d("ALLRECG", str);
+        try {
+            FileOutputStream outputStream;
             outputStream = openFileOutput("recomGroups.txt", Context.MODE_PRIVATE);
-            outputStream.write(s.getBytes());
+            outputStream.write(str.getBytes());
             outputStream.close();
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
 
-    private void readGson() {
-        FileInputStream fis = null;
-        try {
-            fis = openFileInput("recomGroups.txt");
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-            Gson gson = new Gson();
-            Type listOfRecomGroupObject = new TypeToken<ArrayList<RecomGroup>>() {
-            }.getType();
-            String json = sb.toString();
-
-            Log.d("JSON: ", json);
-            //first run
-            if (json.equals("null")) {
-                recomGroups = new ArrayList<>();
-                writeGson();
-                Log.d("RECOM", "OK");
-            } else
-                recomGroups = gson.fromJson(json, listOfRecomGroupObject);
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-            try {
-                FileOutputStream fos = openFileOutput("recomGroups.txt", Context.MODE_PRIVATE);
-                fos.write("".getBytes());
-                fos.close();
-                Log.d("FILE", "MADE");
-            } catch (IOException e1) {
-                e1.printStackTrace();
-            }
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
 
     @Override
     public void onBackPressed() {
@@ -338,6 +479,8 @@ public class UsersActivity extends AppCompatActivity
             drawer.closeDrawer(GravityCompat.START);
         } else {
             super.onBackPressed();
+            finish();
+            System.exit(0);
         }
     }
 
@@ -357,7 +500,6 @@ public class UsersActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_registration) {
-            recomGroups.add(new RecomGroup("one"));
             return true;
         }
 

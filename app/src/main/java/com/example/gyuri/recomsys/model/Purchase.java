@@ -4,12 +4,13 @@ import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.regex.Pattern;
 
 /**
  * Created by Gyuri on 2016. 03. 31..
  */
 public class Purchase {
-    String purchaseObjectSeparator = "|-_-|";
+    public static final String purchaseObjectSeparator = "|-_-|";
 
     public Book book;
     public User user;
@@ -40,9 +41,9 @@ public class Purchase {
     }
 
     public void readFromString(String str){
-        String[] strings = str.split(purchaseObjectSeparator);
-        user = new User(strings[0]);
-        book = new Book(strings[1]);
+        String[] strings = str.split(Pattern.quote(purchaseObjectSeparator));
+        book = new Book(strings[0]);
+        user = new User(strings[1]);
         String dateString = strings[2];
         SimpleDateFormat formatter1 = new SimpleDateFormat("MM/dd/yyyy HH:mm:ss");
         try {

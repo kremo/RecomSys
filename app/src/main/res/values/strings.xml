@@ -7,4 +7,5 @@
     <string name="action_registration">Register</string>
     <string name="username_header">Katona György</string>
     <string name="user_email_header">katona.gyoorgy@android.com</string>
+    <string name="title_activity_purchase_book">PurchaseBookActivity</string>
 </resources>

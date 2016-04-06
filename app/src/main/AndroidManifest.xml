@@ -4,7 +4,6 @@
 
     <application
         android:allowBackup="true"
-
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
         android:supportsRtl="true"
@@ -19,7 +18,18 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
+        <activity
+            android:name=".PurchaseBookActivity"
+            android:label="@string/title_activity_purchase_book"
+            android:parentActivityName=".UsersActivity"
+            android:theme="@style/AppTheme.NoActionBar">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.gyuri.recomsys.UsersActivity" />
+        </activity>
     </application>
 
 </manifest>
