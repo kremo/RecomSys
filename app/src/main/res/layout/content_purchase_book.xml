@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:gravity="center"
-                    android:text="Műfaj::" />
+                    android:text="Műfaj:" />
 
                 <TextView
                     android:id="@+id/genres_purchase_book_value"

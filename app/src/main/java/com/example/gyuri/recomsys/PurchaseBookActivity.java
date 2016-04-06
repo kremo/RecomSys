@@ -66,17 +66,20 @@ public class PurchaseBookActivity extends AppCompatActivity {
 
                 for (RecomGroup rg : UsersActivity.recomGroups)
                     for (String s : book.getGenres())
-                        if (rg.getName().equals(s)) {
+                        if (rg.getName().equals("Legjobb " + s)) {
+
                             rg.addBook(book, 1);
-                            Log.d("INDEX", "" + rg.getBooks().get(book));
-                            rg.addUser(UsersActivity.currentUser);
+
+
+                            if (!rg.getUsers().contains(UsersActivity.currentUser))
+                                rg.addUser(UsersActivity.currentUser);
                             gotIt.put(s, true);
                             UsersActivity.changed = true;
                         }
                 for (String s : book.getGenres()) {
                     if (!gotIt.get(s)) {
                         RecomGroup rg = new RecomGroup();
-                        rg.setName(s);
+                        rg.setName("Legjobb " + s);
                         rg.addBook(book, 1);
                         rg.addUser(UsersActivity.currentUser);
                         UsersActivity.recomGroups.add(rg);

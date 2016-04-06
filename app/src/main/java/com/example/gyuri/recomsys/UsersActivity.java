@@ -73,7 +73,6 @@ public class UsersActivity extends AppCompatActivity
         if (changed) {
             writeToFiles();
             changed = false;
-            Log.d("OK", "IM HERE");
         }
 
         readFromFiles();
@@ -114,7 +113,9 @@ public class UsersActivity extends AppCompatActivity
         for (RecomGroup rg : recomGroups) {
             if (rg.getUsers().contains(currentUser)) {
                 createShelf(rg);
-                Log.d("CSINÁLOM", "end");
+                Log.d("KÖNYVREC", rg.getName());
+                for(Book b: rg.getBooks().keySet())
+                    Log.d("KÖNYV",b.getTitle());
             }
         }
     }
@@ -127,7 +128,7 @@ public class UsersActivity extends AppCompatActivity
         ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
         LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
 
-        int arraySize = rg.getBooks().size() < 5 ? rg.getBooks().size() : 5;
+        int arraySize = rg.getBooks().size() /*< 5 ? rg.getBooks().size() : 5*/;
         Book[] bestBooks = new Book[arraySize];
         rg.sortByValue();
         List<Book> l = new ArrayList<>(rg.getBooks().keySet());
@@ -219,50 +220,6 @@ public class UsersActivity extends AppCompatActivity
 
     }
 
-    private void createExampleShelves() {
-        LayoutInflater li = (LayoutInflater) getBaseContext().getSystemService(LAYOUT_INFLATER_SERVICE);
-
-        ViewGroup grouplist = (ViewGroup) findViewById(R.id.groups_linear_layout);
-
-        ViewGroup shelf = (ViewGroup) li.inflate(R.layout.shelf_layout, null);
-        ViewGroup shelf2 = (ViewGroup) li.inflate(R.layout.shelf_layout, null);
-
-        ViewGroup bookslist = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
-        ViewGroup bookslist2 = (ViewGroup) li.inflate(R.layout.book_list_layout, null);
-
-
-        LinearLayout books = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
-
-        LinearLayout books2 = (LinearLayout) li.inflate(R.layout.books_linear_layout, null);
-
-
-        LinearLayout book = (LinearLayout) li.inflate(R.layout.book_layout, books);
-        LinearLayout book2 = (LinearLayout) li.inflate(R.layout.book_layout, books);
-        LinearLayout book3 = (LinearLayout) li.inflate(R.layout.book_layout, books);
-        LinearLayout book4 = (LinearLayout) li.inflate(R.layout.book_layout, books);
-        LinearLayout book5 = (LinearLayout) li.inflate(R.layout.book_layout, books);
-        LinearLayout book6 = (LinearLayout) li.inflate(R.layout.book_layout, books);
-
-
-        LinearLayout book7 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
-        LinearLayout book8 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
-        LinearLayout book9 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
-        LinearLayout book10 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
-        LinearLayout book11 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
-        LinearLayout book12 = (LinearLayout) li.inflate(R.layout.book_layout, books2);
-
-        bookslist.addView(books);
-        shelf.addView(bookslist);
-        grouplist.addView(shelf);
-
-
-        bookslist2.addView(books2);
-        shelf2.addView(bookslist2);
-        grouplist.addView(shelf2);
-
-
-    }
-
 
     @Override
     protected void onStart() {
@@ -305,7 +262,6 @@ public class UsersActivity extends AppCompatActivity
             }
             String all = sb.toString();
 
-            Log.d("READFILE/PURCHASES", "+" + all + "+");
             purchases.clear();
             String[] ps = all.split(Pattern.quote(arraySeparator));
             for (String str : ps) {
@@ -338,8 +294,6 @@ public class UsersActivity extends AppCompatActivity
             bufferedReader.close();
 
 
-            Log.d("READFILE/RECOMGROUPS", all);
-
             String[] rgs = all.split(Pattern.quote(arraySeparator));
 
             recomGroups.clear();
@@ -347,7 +301,6 @@ public class UsersActivity extends AppCompatActivity
                 if (str.length() > 0) {
                     RecomGroup rg = new RecomGroup(str);
                     recomGroups.add(rg);
-                    Log.d("RGREAD", rg.getName());
                 }
             }
 
@@ -376,7 +329,6 @@ public class UsersActivity extends AppCompatActivity
             }
             String all = sb.toString();
 
-            Log.d("READFILE/USERS", all);
 
             users.clear();
             String[] us = all.split(Pattern.quote(arraySeparator));
@@ -393,8 +345,8 @@ public class UsersActivity extends AppCompatActivity
     }
 
     private void logRecomGroups() {
-        for (int i = 0; i < recomGroups.size(); i++)
-            Log.d("recomGroups", recomGroups.get(i).getName());
+        for (RecomGroup rg : recomGroups)
+            Log.d("RECOMGROUP", rg.getName());
     }
 
     @Override
@@ -404,22 +356,9 @@ public class UsersActivity extends AppCompatActivity
     }
 
     public void writeToFiles() {
-
-        Log.d("WRITEFILE", "START");
-
-        Log.d("RGS", "start");
-        for (RecomGroup recg : UsersActivity.recomGroups)
-            Log.d("RGS", recg.getName());
-        Log.d("RGS", "end");
-
         writeRecomGroups();
-
         writeUsers();
-
         writePurchases();
-
-        Log.d("WRITEFILE", "END");
-
     }
 
     private void writePurchases() {
@@ -460,7 +399,6 @@ public class UsersActivity extends AppCompatActivity
             str = str.concat(rg.writeToString() + arraySeparator);
         }
 
-        Log.d("ALLRECG", str);
         try {
             FileOutputStream outputStream;
             outputStream = openFileOutput("recomGroups.txt", Context.MODE_PRIVATE);
@@ -514,10 +452,20 @@ public class UsersActivity extends AppCompatActivity
 
         if (id == R.id.nav_gyuri) {
             //egyik lista
+            for (User u : users) {
+                if (u.getNickName().equals("Gyuri"))
+                    currentUser = u;
+            }
+            createShelvesForUser();
 
 
         } else if (id == R.id.nav_laci) {
             //másik lista
+            for (User u : users) {
+                if (u.getNickName().equals("Laci"))
+                    currentUser = u;
+            }
+            createShelvesForUser();
 
         } else if (id == R.id.nav_purchases) {
             //összes vásárlás

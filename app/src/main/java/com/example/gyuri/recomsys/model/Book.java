@@ -108,7 +108,7 @@ public class Book {
     }
 
     public void readFromString(String str) {
-        Log.d("BOOKSTR",str);
+        Log.d("BOOKSTR", str);
 
         String[] strings = str.split(Pattern.quote(bookObjectSeparator));
         title = strings[0];
@@ -125,5 +125,23 @@ public class Book {
 
     }
 
+    @Override
+    public boolean equals(Object b) {
+        if (this.getGenres().equals(((Book) b).getGenres()) &
+                this.getAuthor().equals(((Book) b).getAuthor()) &
+                this.getTitle().equals(((Book) b).getTitle()) &
+                this.getPicture().equals(((Book) b).getPicture()) &
+                this.getPublisher().equals(((Book) b).getPublisher()) &
+                this.getReleased() == ((Book) b).getReleased() &
+                this.getPrice() == ((Book) b).getPrice())
+            return true;
+        else
+            return false;
 
+    }
+
+    @Override
+    public int hashCode() {
+        return released*price*title.hashCode();
+    }
 }

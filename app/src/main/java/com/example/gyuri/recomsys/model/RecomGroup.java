@@ -1,5 +1,9 @@
 package com.example.gyuri.recomsys.model;
 
+import android.util.Log;
+
+import com.example.gyuri.recomsys.UsersActivity;
+
 import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -90,9 +94,26 @@ public class RecomGroup {
     }
 
     public void addBook(Book book, int i) {
-        if (books.containsKey(book))
+        if (myContainsKey(book) & !users.contains(UsersActivity.currentUser)) {
             books.put(book, books.get(book) + 1);
-        books.put(book, i);
+        } else if (!myContainsKey(book)) {
+            books.put(book, i);
+        }
+    }
+
+    private boolean myContainsKey(Book book) {
+        boolean equals = false;
+        for (Book b : books.keySet()) {
+            if (book.getGenres().equals(b.getGenres()) &
+                    book.getAuthor().equals(b.getAuthor()) &
+                    book.getTitle().equals(b.getTitle()) &
+                    book.getPicture().equals(b.getPicture()) &
+                    book.getPublisher().equals(b.getPublisher()) &
+                    book.getReleased() == b.getReleased() &
+                    book.getPrice() == b.getPrice())
+                equals = true;
+        }
+        return equals;
     }
 
     public String writeToString() {
