@@ -494,9 +494,8 @@ public class UsersActivity extends AppCompatActivity
         } else if (id == R.id.nav_purchases) {
             //összes vásárlás
 
-        }
-        else if( id == R.id.action_registration){
-
+            Intent intent = new Intent(UsersActivity.this, PurchasesListActivity.class);
+            startActivity(intent);
         }
 
 
