@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
@@ -24,12 +23,10 @@ import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.Spinner;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.gyuri.recomsys.model.Book;
 import com.example.gyuri.recomsys.model.Purchase;
 import com.example.gyuri.recomsys.model.RecomGroup;
-import com.example.gyuri.recomsys.model.RegisterActivity;
 import com.example.gyuri.recomsys.model.User;
 
 import java.io.BufferedReader;
@@ -87,8 +84,8 @@ public class UsersActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        NavigationView navigationView2 = (NavigationView) findViewById(R.id.nav_register);
-        navigationView2.setNavigationItemSelectedListener(this);
+        /*NavigationView navigationView2 = (NavigationView) findViewById(R.id.nav_register);
+        navigationView2.setNavigationItemSelectedListener(this);*/
 
 
         //createExampleShelves();
@@ -175,6 +172,7 @@ public class UsersActivity extends AppCompatActivity
                     startActivity(intent);
                 }
             };
+
             books.addView(book);
             book.setOnClickListener(ocl);
             ((ImageButton) book.getChildAt(0)).setOnClickListener(ocl);
@@ -461,6 +459,9 @@ public class UsersActivity extends AppCompatActivity
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_registration) {
+            Intent intent = new Intent(UsersActivity.this, RegisterActivity.class);
+            //intent.putExtra("BOOK", b.writeToString());
+            startActivity(intent);
             return true;
         }
 
@@ -494,9 +495,10 @@ public class UsersActivity extends AppCompatActivity
             //összes vásárlás
 
         }
-        else if (id == R.id.nav_register){
-                startActivity(new Intent(this, RegisterActivity.class));
+        else if( id == R.id.action_registration){
+
         }
+
 
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);

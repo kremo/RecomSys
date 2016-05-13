@@ -88,7 +88,7 @@ public class PurchaseBookActivity extends AppCompatActivity {
                 }
 
                 Context context = getApplicationContext();
-                CharSequence text = "Könyv megvéve!";
+                CharSequence text = "Book purchased!";
 
                 int duration = Toast.LENGTH_SHORT;
 

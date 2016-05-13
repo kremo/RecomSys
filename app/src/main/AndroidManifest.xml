@@ -31,6 +31,15 @@
                 android:name="android.support.PARENT_ACTIVITY"
                 android:value="com.example.gyuri.recomsys.UsersActivity" />
         </activity>
+        <activity
+            android:name=".RegisterActivity"
+            android:label="RegisterActivity"
+            android:parentActivityName=".UsersActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.gyuri.recomsys.UsersActivity" />
+        </activity>
+
     </application>
 
 </manifest>
