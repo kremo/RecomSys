@@ -8,4 +8,12 @@
     <string name="username_header">Katona György</string>
     <string name="user_email_header">katona.gyoorgy@android.com</string>
     <string name="title_activity_purchase_book">PurchaseBookActivity</string>
+
+    <string-array name="ages">
+        <item>0-10</item>
+        <item>10-20</item>
+        <item>20-30</item>
+        <item>30-40</item>
+        <item>40-50</item>
+    </string-array>
 </resources>

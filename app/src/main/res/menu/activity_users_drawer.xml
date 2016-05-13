@@ -11,6 +11,7 @@
             android:icon="@drawable/ic_menu_send"
             android:title="Laci" />
 
+
     </group>
 
     <item android:title="Log">
@@ -20,6 +21,8 @@
                 android:icon="@drawable/ic_menu_manage"
                 android:title="Purchases" />
         </menu>
+
     </item>
+
 
 </menu>

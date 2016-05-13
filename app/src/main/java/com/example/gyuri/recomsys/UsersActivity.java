@@ -15,14 +15,21 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.gyuri.recomsys.model.Book;
 import com.example.gyuri.recomsys.model.Purchase;
 import com.example.gyuri.recomsys.model.RecomGroup;
+import com.example.gyuri.recomsys.model.RegisterActivity;
 import com.example.gyuri.recomsys.model.User;
 
 import java.io.BufferedReader;
@@ -38,6 +45,12 @@ import java.util.regex.Pattern;
 
 public class UsersActivity extends AppCompatActivity
         implements NavigationView.OnNavigationItemSelectedListener {
+
+    Button bRegister;
+    EditText etName, etUserName, etAge;
+
+    Spinner spinner;
+    ArrayAdapter<CharSequence> adapter;
 
     final String arraySeparator = "[!-_-!]";
 
@@ -58,6 +71,13 @@ public class UsersActivity extends AppCompatActivity
         setSupportActionBar(toolbar);
 
 
+        //korválasztó legördülő listának
+
+
+
+
+
+
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -66,6 +86,9 @@ public class UsersActivity extends AppCompatActivity
 
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
+
+        NavigationView navigationView2 = (NavigationView) findViewById(R.id.nav_register);
+        navigationView2.setNavigationItemSelectedListener(this);
 
 
         //createExampleShelves();
@@ -471,6 +494,10 @@ public class UsersActivity extends AppCompatActivity
             //összes vásárlás
 
         }
+        else if (id == R.id.nav_register){
+                startActivity(new Intent(this, RegisterActivity.class));
+        }
+
 
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
