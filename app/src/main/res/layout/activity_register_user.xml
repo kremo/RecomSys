@@ -6,44 +6,56 @@
 
     <TextView
         android:layout_width="wrap_content"
-        android:text="Name"
-        android:textSize="32sp"
+        android:text="Név"
+        android:textSize="20sp"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/etName"
         android:layout_width="match_parent"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="0dp"
         android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="wrap_content"
-        android:text="Username"
-        android:textSize="32sp"
+        android:text="Felhasználónév"
+        android:textSize="20sp"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/etUsername"
         android:layout_width="match_parent"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="5dp"
         android:layout_height="wrap_content" />
     <TextView
         android:layout_width="wrap_content"
-        android:text="Password"
-        android:textSize="32sp"
+        android:text="E-mail cím"
+        android:textSize="20sp"
+        android:layout_height="wrap_content" />
+
+    <EditText
+        android:id="@+id/etEmail"
+        android:layout_width="match_parent"
+        android:layout_marginBottom="0dp"
+        android:layout_height="wrap_content" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:text="Jelszó"
+        android:textSize="20sp"
         android:layout_height="wrap_content" />
 
     <EditText
         android:id="@+id/etPassword"
         android:layout_width="match_parent"
-        android:layout_marginBottom="10dp"
+        android:layout_marginBottom="0dp"
         android:layout_height="wrap_content" />
 
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Gender"
-        android:textSize="32sp"
+        android:text="Nem"
+        android:textSize="20sp"
         />
     <Spinner  android:id="@+id/spinnerGender"
         android:layout_width="fill_parent"
@@ -54,8 +66,8 @@
     <TextView
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:text="Age"
-        android:textSize="32sp"
+        android:text="Kor"
+        android:textSize="20sp"
         />
 
     <Spinner  android:id="@+id/spinnerAge"
@@ -66,7 +78,7 @@
 
     <Button
         android:id="@+id/bRegister"
-        android:text="Register"
+        android:text="Regisztrálás"
         android:layout_width="match_parent"
         android:layout_height="wrap_content" />
 

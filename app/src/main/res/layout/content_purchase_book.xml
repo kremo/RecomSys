@@ -40,7 +40,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:gravity="center"
-                    android:text="Title:" />
+                    android:text="Cím:" />
 
                 <TextView
                     android:id="@+id/title_purchase_book_value"
@@ -62,7 +62,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:gravity="center"
-                    android:text="Author:" />
+                    android:text="Író:" />
 
                 <TextView
                     android:id="@+id/author_purchase_book_value"
@@ -84,7 +84,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:gravity="center"
-                    android:text="Price:" />
+                    android:text="Ár:" />
 
                 <TextView
                     android:id="@+id/price_purchase_book_value"
@@ -106,7 +106,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:gravity="center"
-                    android:text="Published:" />
+                    android:text="Kiadás éve:" />
 
                 <TextView
                     android:id="@+id/realesed_purchase_book_value"
@@ -128,7 +128,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:gravity="center"
-                    android:text="Publisher:" />
+                    android:text="Kiadó:" />
 
                 <TextView
                     android:id="@+id/publisher_purchase_book_value"
@@ -149,7 +149,7 @@
                     android:layout_height="wrap_content"
                     android:layout_column="0"
                     android:gravity="center"
-                    android:text="Genre:" />
+                    android:text="Műfaj:" />
 
                 <TextView
                     android:id="@+id/genres_purchase_book_value"

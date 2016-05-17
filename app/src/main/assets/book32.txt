@@ -1,6 +1,6 @@
-Kriptográfia - Az informatikai biztonság alapjai
-Ködmön József
+KriptogrÃ¡fia - Az informatikai biztonsÃ¡g alapjai
+KÃ¶dmÃ¶n JÃ³zsef
 1999
 Computerbooks
 3600
-számítástechnika
+szÃ¡mÃ­tÃ¡stechnika

@@ -14,12 +14,12 @@
 
     </group>
 
-    <item android:title="Log">
+    <item android:title="Saját">
         <menu>
             <item
                 android:id="@+id/nav_purchases"
                 android:icon="@drawable/ic_menu_manage"
-                android:title="Purchases" />
+                android:title="Vásárlások" />
         </menu>
 
     </item>
