@@ -1,8 +1,6 @@
 package com.example.gyuri.recomsys;
 
-import android.content.Context;
 import android.os.Bundle;
-import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.AdapterView;
@@ -12,7 +10,7 @@ import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
 
-import com.example.gyuri.recomsys.R;
+import com.example.gyuri.recomsys.model.DataSource;
 import com.example.gyuri.recomsys.model.User;
 
 /**
@@ -25,6 +23,8 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
         Spinner spinner2;
         ArrayAdapter<CharSequence> adapter1;
         ArrayAdapter<CharSequence> adapter2;
+        boolean isMan = true;
+        Integer age = 25;
 
 
         @Override
@@ -42,7 +42,10 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 spinner1.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
-                                Toast.makeText(getBaseContext(), parent.getItemAtPosition(position)+" kiválasztva", Toast.LENGTH_LONG).show();
+                                String selected = (String) parent.getItemAtPosition(position);
+                                Toast.makeText(getBaseContext(), selected + " kiválasztva", Toast.LENGTH_LONG).show();
+                                String[] parts = selected.split("-");
+                                age = Integer.parseInt(parts[0])+5;
                         }
 
                         @Override
@@ -61,6 +64,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                         @Override
                         public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
                                 Toast.makeText(getBaseContext(), parent.getItemAtPosition(position)+" kiválasztva", Toast.LENGTH_LONG).show();
+                                if (parent.getItemAtPosition(position) == "Férfi"){
+                                        isMan = true;
+                                }
+                                else {
+                                        isMan = false;
+                                }
                         }
 
                         @Override
@@ -73,6 +82,12 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                 etName = (EditText) findViewById(R.id.etName);
                 etUserName =  (EditText) findViewById(R.id.etUsername);
                 // etAge
+
+        }
+
+        @Override
+        protected void onResume() {
+                super.onResume();
                 bRegister = (Button) findViewById(R.id.bRegister);
 
                 bRegister.setOnClickListener(this);
@@ -87,23 +102,16 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 Spinner spinner = (Spinner) findViewById(R.id.spinnerAge) ;
                                 String text = spinner.getSelectedItem().toString();
 
+                                User nUser = new User(etName.getText().toString(), DataSource.getUsers(this).size()+1,etUserName.getText().toString(),age);
+                                nUser.isMan = this.isMan;
+                                DataSource.addUserToSavedUsers(nUser, this);
 
-                                User nUser = new User(etName.getText().toString(), 3,
-                                        etUserName.getText().toString(),25);
-
-
-
-                                Context context = getApplicationContext();
                                 CharSequence outText = "Regisztrálás sikeres!";
-
                                 int duration = Toast.LENGTH_SHORT;
-
-                                Toast toast = Toast.makeText(context, outText, duration);
+                                Toast toast = Toast.makeText(this, outText, duration);
                                 toast.show();
 
-
                                 onBackPressed();
-
 
                                 break;
                 }

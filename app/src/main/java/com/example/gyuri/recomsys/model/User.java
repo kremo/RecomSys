@@ -14,6 +14,7 @@ public class User {
     private String nickName;
     private int age;
     private String name;
+    public boolean isMan;
 
     public User(String name, long id, String nickName, int age) {
         this.name = name;

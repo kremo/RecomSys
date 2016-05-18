@@ -256,8 +256,6 @@ public class UsersActivity extends AppCompatActivity implements NavigationView.O
 
 
     public RecomGroup createAuthorRecomGroups(String writer) {
-
-
         RecomGroup rg = new RecomGroup();
         String label =  "Legjobb" + writer + "által írt könyvek";
         rg.setName(label);

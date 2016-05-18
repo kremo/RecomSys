@@ -48,6 +48,15 @@
                 android:value="com.example.gyuri.recomsys.UsersActivity" />
         </activity>
 
+        <activity
+            android:name=".ViewPurchaseActivity"
+            android:label="Vásárlásom"
+            android:parentActivityName=".PurchasesListActivity">
+            <meta-data
+                android:name="android.support.PARENT_ACTIVITY"
+                android:value="com.example.gyuri.recomsys.UsersActivity" />
+        </activity>
+
     </application>
 
 </manifest>

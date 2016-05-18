@@ -37,13 +37,19 @@ public class DataSource {
     }
 
     public static void addUserToSavedUsers(User user, Context context){
-
+        ArrayList<User>users = getUsers(context);
+        users.add(user);
+        writeUsers(users, context);
     }
     public static void addRecomGroupToSavedGroups(RecomGroup group, Context context){
-
+        ArrayList<RecomGroup>rgs = getRecomGroups(context);
+        rgs.add(group);
+        writeRecomGroups(rgs, context);
     }
     public static void addPurchaseToSavedpurchased(Purchase purchase,Context context){
-
+        ArrayList<Purchase>prs = getPurchases(context);
+        prs.add(purchase);
+        writePurchases(prs, context);
     }
 
     public static void writeUsers(ArrayList<User> users, Context context) {
