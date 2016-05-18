@@ -1,10 +1,5 @@
 package com.example.gyuri.recomsys.model;
 
-import android.util.Log;
-
-import com.example.gyuri.recomsys.UsersActivity;
-
-import java.lang.reflect.Array;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -94,7 +89,7 @@ public class RecomGroup {
     }
 
     public void addBook(Book book, int i) {
-        if (myContainsKey(book) & !users.contains(UsersActivity.currentUser)) {
+        if (myContainsKey(book) & !users.contains(DataSource.currentUser)) {
             books.put(book, books.get(book) + 1);
         } else if (!myContainsKey(book)) {
             books.put(book, i);

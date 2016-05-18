@@ -1,6 +1,5 @@
 package com.example.gyuri.recomsys;
 
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.NavigationView;
@@ -25,34 +24,26 @@ import android.widget.Spinner;
 import android.widget.TextView;
 
 import com.example.gyuri.recomsys.model.Book;
+import com.example.gyuri.recomsys.model.DataSource;
 import com.example.gyuri.recomsys.model.Purchase;
 import com.example.gyuri.recomsys.model.RecomGroup;
 import com.example.gyuri.recomsys.model.User;
 
 import java.io.BufferedReader;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
-public class UsersActivity extends AppCompatActivity
-        implements NavigationView.OnNavigationItemSelectedListener {
+public class UsersActivity extends AppCompatActivity implements NavigationView.OnNavigationItemSelectedListener {
 
     Button bRegister;
     EditText etName, etUserName, etAge;
-
     Spinner spinner;
     ArrayAdapter<CharSequence> adapter;
 
-    final String arraySeparator = "[!-_-!]";
-
     private static final int ALL_BOOKS = 50;
-    public static User currentUser;
     public static ArrayList<RecomGroup> recomGroups = new ArrayList<>();
     public static ArrayList<User> users = new ArrayList<>();
     public static ArrayList<Purchase> purchases = new ArrayList<>();
@@ -67,14 +58,7 @@ public class UsersActivity extends AppCompatActivity
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
-
         //korválasztó legördülő listának
-
-
-
-
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         ActionBarDrawerToggle toggle = new ActionBarDrawerToggle(
                 this, drawer, toolbar, R.string.navigation_drawer_open, R.string.navigation_drawer_close);
@@ -84,10 +68,6 @@ public class UsersActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-
-
-
-        //createExampleShelves();
 
         if (changed) {
             writeToFiles();
@@ -104,7 +84,7 @@ public class UsersActivity extends AppCompatActivity
 
         for (User u : users) {
             if (u.getNickName().equals("Gyuri"))
-                currentUser = u;
+                DataSource.currentUser = u;
         }
 
 
@@ -135,7 +115,7 @@ public class UsersActivity extends AppCompatActivity
                     recomGroups.remove(i);
                 }
         for (RecomGroup rg : recomGroups) {
-            if (rg.getUsers().contains(currentUser)) {
+            if (rg.getUsers().contains(DataSource.currentUser)) {
                 createShelf(rg);
                 Log.d("KÖNYVREC", rg.getName());
                 for(Book b: rg.getBooks().keySet())
@@ -185,18 +165,13 @@ public class UsersActivity extends AppCompatActivity
         bookslist.addView(books);
         shelf.addView(bookslist);
         grouplist.addView(shelf);
-
         ((TextView) ((RelativeLayout) shelf.getChildAt(0)).getChildAt(0)).setText(rg.getName());
-
     }
 
 
     private void createAllBooksRecomGroup() {
-
-
         RecomGroup rg = new RecomGroup();
         rg.setName("Minden könyv");
-
 
         for (int i = 1; i < ALL_BOOKS + 1; i++) {
             try {
@@ -222,8 +197,6 @@ public class UsersActivity extends AppCompatActivity
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-
         }
         boolean gotIt = false;
         for (RecomGroup recomGroup : recomGroups)
@@ -237,11 +210,7 @@ public class UsersActivity extends AppCompatActivity
         }
     }
 
-
-
     private void createMan2030RecomGroup() {
-
-
         RecomGroup rg = new RecomGroup();
         rg.setName("Hasonló korú férfiak kedvencei:");
 
@@ -342,7 +311,6 @@ public class UsersActivity extends AppCompatActivity
 
     }
 
-
     @Override
     protected void onStart() {
         if (changed) {
@@ -350,120 +318,6 @@ public class UsersActivity extends AppCompatActivity
             changed = false;
         }
         super.onStart();
-    }
-
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-    }
-
-    private void readFromFiles() {
-
-
-        readRecomGroups();
-        readUsers();
-        readPurchases();
-
-
-    }
-
-    private void readPurchases() {
-        FileInputStream fis = null;
-
-        try {
-            fis = openFileInput("purchases.txt");
-
-
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-            String all = sb.toString();
-
-            purchases.clear();
-            String[] ps = all.split(Pattern.quote(arraySeparator));
-            for (String str : ps) {
-                if (str.length() > 0)
-                    purchases.add(new Purchase(str));
-            }
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void readRecomGroups() {
-        FileInputStream fis = null;
-
-        try {
-            fis = openFileInput("recomGroups.txt");
-
-
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            String all = new String();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                all = all.concat(line);
-            }
-            bufferedReader.close();
-
-
-            String[] rgs = all.split(Pattern.quote(arraySeparator));
-
-            recomGroups.clear();
-            for (String str : rgs) {
-                if (str.length() > 0) {
-                    RecomGroup rg = new RecomGroup(str);
-                    recomGroups.add(rg);
-                }
-            }
-
-        } catch (FileNotFoundException e1) {
-            e1.printStackTrace();
-        } catch (IOException e1) {
-            e1.printStackTrace();
-        }
-
-    }
-
-
-    private void readUsers() {
-        FileInputStream fis = null;
-
-        try {
-            fis = openFileInput("users.txt");
-
-
-            InputStreamReader isr = new InputStreamReader(fis);
-            BufferedReader bufferedReader = new BufferedReader(isr);
-            StringBuilder sb = new StringBuilder();
-            String line;
-            while ((line = bufferedReader.readLine()) != null) {
-                sb.append(line);
-            }
-            String all = sb.toString();
-
-
-            users.clear();
-            String[] us = all.split(Pattern.quote(arraySeparator));
-            for (String str : us)
-                if (str.length() > 0)
-                    users.add(new User(str));
-
-
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
 
     private void logRecomGroups() {
@@ -475,65 +329,6 @@ public class UsersActivity extends AppCompatActivity
     protected void onStop() {
         writeToFiles();
         super.onStop();
-    }
-
-    public void writeToFiles() {
-        writeRecomGroups();
-        writeUsers();
-        writePurchases();
-    }
-
-    private void writePurchases() {
-        String str = new String();
-        for (Purchase p : purchases) {
-            str = str.concat(p.writeToString() + arraySeparator);
-        }
-        try {
-            FileOutputStream outputStream;
-            outputStream = openFileOutput("purchases.txt", Context.MODE_PRIVATE);
-            outputStream.write(str.getBytes());
-            outputStream.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeUsers() {
-        String str = new String();
-        for (User u : users) {
-            str = str.concat(u.writeToString() + arraySeparator);
-        }
-        try {
-            FileOutputStream outputStream;
-            outputStream = openFileOutput("users.txt", Context.MODE_PRIVATE);
-            outputStream.write(str.getBytes());
-            outputStream.close();
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    private void writeRecomGroups() {
-        String str = new String();
-        for (RecomGroup rg : recomGroups) {
-            str = str.concat(rg.writeToString() + arraySeparator);
-        }
-
-        try {
-            FileOutputStream outputStream;
-            outputStream = openFileOutput("recomGroups.txt", Context.MODE_PRIVATE);
-            outputStream.write(str.getBytes());
-            outputStream.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-
-    public static ArrayList<Purchase> GetPurchases(){
-        return purchases;
     }
 
 
@@ -584,7 +379,7 @@ public class UsersActivity extends AppCompatActivity
             //egyik lista
             for (User u : users) {
                 if (u.getNickName().equals("Gyuri"))
-                    currentUser = u;
+                    DataSource.currentUser = u;
             }
             createShelvesForUser();
 
@@ -593,7 +388,7 @@ public class UsersActivity extends AppCompatActivity
             //másik lista
             for (User u : users) {
                 if (u.getNickName().equals("Laci"))
-                    currentUser = u;
+                    DataSource.currentUser = u;
             }
             createShelvesForUser();
 
@@ -604,10 +399,23 @@ public class UsersActivity extends AppCompatActivity
             startActivity(intent);
         }
 
-
-
         DrawerLayout drawer = (DrawerLayout) findViewById(R.id.drawer_layout);
         drawer.closeDrawer(GravityCompat.START);
         return true;
+    }
+
+
+
+    //DATA HANDLING
+    private void writeToFiles(){
+        DataSource.writePurchases(purchases,this);
+        DataSource.writeRecomGroups(recomGroups, this);
+        DataSource.writeUsers(users,this);
+    }
+
+    private void readFromFiles(){
+        users = DataSource.getUsers(this);
+        purchases = DataSource.getPurchases(this);
+        recomGroups = DataSource.getRecomGroups(this);
     }
 }

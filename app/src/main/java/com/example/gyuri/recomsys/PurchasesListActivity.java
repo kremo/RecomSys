@@ -17,7 +17,6 @@ public class PurchasesListActivity extends AppCompatActivity {
     private RecyclerView mRecyclerView;
     private PurchasesRecyclerAdapter mAdapter;
     private RecyclerView.LayoutManager mLayoutManager;
-    private ArrayList<String> purchasesString;
     private ArrayList<Purchase> purchases;
 
     @Override
@@ -29,13 +28,6 @@ public class PurchasesListActivity extends AppCompatActivity {
             purchasesString.add(date.toString());
         }*/
 
-        purchasesString = new ArrayList<String>();
-        purchasesString.add("2015 dec. 1.");
-        purchasesString.add("2016 jan. 12.");
-        purchasesString.add("2016 febr. 21.");
-        purchasesString.add("2016 marc. 25.");
-        purchasesString.add("2016 apr. 30.");
-        purchasesString.add("2016 may. 27.");
 
 
 
@@ -48,7 +40,7 @@ public class PurchasesListActivity extends AppCompatActivity {
         mLayoutManager = new LinearLayoutManager(this);
         mRecyclerView.setLayoutManager(mLayoutManager);
 
-        mAdapter = new PurchasesRecyclerAdapter(purchasesString);
+        mAdapter = new PurchasesRecyclerAdapter(purchases);
         mRecyclerView.setAdapter(mAdapter);
     }
 }

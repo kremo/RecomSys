@@ -15,6 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.gyuri.recomsys.model.Book;
+import com.example.gyuri.recomsys.model.DataSource;
 import com.example.gyuri.recomsys.model.Purchase;
 import com.example.gyuri.recomsys.model.RecomGroup;
 
@@ -55,7 +56,7 @@ public class PurchaseBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //new purchase
-                UsersActivity.purchases.add(new Purchase(book, UsersActivity.currentUser, Calendar.getInstance().getTime()));
+                UsersActivity.purchases.add(new Purchase(book, DataSource.currentUser, Calendar.getInstance().getTime()));
 
                 int i = book.getGenres().size();
                 HashMap<String, Boolean> gotIt = new HashMap<String, Boolean>(i);
@@ -70,8 +71,8 @@ public class PurchaseBookActivity extends AppCompatActivity {
                             rg.addBook(book, 1);
 
 
-                            if (!rg.getUsers().contains(UsersActivity.currentUser))
-                                rg.addUser(UsersActivity.currentUser);
+                            if (!rg.getUsers().contains(DataSource.currentUser))
+                                rg.addUser(DataSource.currentUser);
                             gotIt.put(s, true);
                             UsersActivity.changed = true;
                         }
@@ -80,7 +81,7 @@ public class PurchaseBookActivity extends AppCompatActivity {
                         RecomGroup rg = new RecomGroup();
                         rg.setName("Legjobb " + s);
                         rg.addBook(book, 1);
-                        rg.addUser(UsersActivity.currentUser);
+                        rg.addUser(DataSource.currentUser);
                         UsersActivity.recomGroups.add(rg);
                         UsersActivity.changed = true;
 

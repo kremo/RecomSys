@@ -7,13 +7,15 @@ import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.example.gyuri.recomsys.model.Purchase;
+
 import java.util.ArrayList;
 
 /**
  * Created by Andras on 13/05/16.
  */
 public class PurchasesRecyclerAdapter extends RecyclerView.Adapter {
-    ArrayList<String> purchases;
+    ArrayList<Purchase> purchases;
 
     public class PurchaseCard extends RecyclerView.ViewHolder{
         TextView label;
@@ -24,7 +26,7 @@ public class PurchasesRecyclerAdapter extends RecyclerView.Adapter {
         }
     }
 
-    public PurchasesRecyclerAdapter(ArrayList<String> allPurchases) {
+    public PurchasesRecyclerAdapter(ArrayList<Purchase> allPurchases) {
         purchases = allPurchases;
     }
 
@@ -37,9 +39,9 @@ public class PurchasesRecyclerAdapter extends RecyclerView.Adapter {
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder viewHolder, int position) {
-        String actualPurchase = purchases.get(position);
+        Purchase actualPurchase = purchases.get(position);
         PurchaseCard attendeeCard = (PurchaseCard)viewHolder;
-        attendeeCard.label.setText(actualPurchase);
+        attendeeCard.label.setText("actualPurchase");
     }
 
     @Override

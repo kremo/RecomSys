@@ -2,8 +2,6 @@ package com.example.gyuri.recomsys.model;
 
 import android.util.Log;
 
-import java.util.ArrayList;
-import java.util.Date;
 import java.util.regex.Pattern;
 
 /**
@@ -12,44 +10,10 @@ import java.util.regex.Pattern;
 public class User {
     public static final String userStringSeparator = "-!U!-";
 
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    private String name;
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-
-    public String getNickName() {
-        return nickName;
-    }
-
-    public void setNickName(String nickName) {
-        this.nickName = nickName;
-    }
-
-    public int getAge() {
-        return age;
-    }
-
-    public void setAge(int age) {
-        this.age = age;
-    }
-
     private long id;
     private String nickName;
     private int age;
+    private String name;
 
     public User(String name, long id, String nickName, int age) {
         this.name = name;
@@ -60,6 +24,31 @@ public class User {
 
     public User(String s) {
         this.readFromString(s);
+    }
+
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+    public long getId() {
+        return id;
+    }
+    public void setId(long id) {
+        this.id = id;
+    }
+    public String getNickName() {
+        return nickName;
+    }
+    public void setNickName(String nickName) {
+        this.nickName = nickName;
+    }
+    public int getAge() {
+        return age;
+    }
+    public void setAge(int age) {
+        this.age = age;
     }
 
     public String writeToString() {
