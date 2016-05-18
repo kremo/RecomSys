@@ -17,9 +17,14 @@ public class ViewPurchaseActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_purchase);
-        createShelf();
+
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        createShelf();
+    }
 
     private void createShelf() {
         Bundle b = getIntent().getExtras();

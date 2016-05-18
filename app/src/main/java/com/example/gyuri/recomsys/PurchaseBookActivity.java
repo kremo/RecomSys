@@ -23,12 +23,13 @@ import java.util.Calendar;
 import java.util.HashMap;
 
 public class PurchaseBookActivity extends AppCompatActivity {
-
+Context context;
     Book book;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        context = this;
         setContentView(R.layout.activity_purchase_book);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
@@ -56,8 +57,9 @@ public class PurchaseBookActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 //new purchase
+                Purchase ps = new Purchase(book, DataSource.currentUser, Calendar.getInstance().getTime());
                 UsersActivity.purchases.add(new Purchase(book, DataSource.currentUser, Calendar.getInstance().getTime()));
-
+                DataSource.addPurchaseToSavedpurchased(ps, context);
                 int i = book.getGenres().size();
                 HashMap<String, Boolean> gotIt = new HashMap<String, Boolean>(i);
 
