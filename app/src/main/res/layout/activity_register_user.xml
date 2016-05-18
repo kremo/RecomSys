@@ -76,6 +76,7 @@
         android:drawSelectorOnTop="false"
         />
 
+
     <Button
         android:id="@+id/bRegister"
         android:text="Regisztrálás"

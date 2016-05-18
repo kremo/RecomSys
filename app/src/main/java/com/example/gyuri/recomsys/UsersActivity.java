@@ -84,8 +84,7 @@ public class UsersActivity extends AppCompatActivity
         NavigationView navigationView = (NavigationView) findViewById(R.id.nav_view);
         navigationView.setNavigationItemSelectedListener(this);
 
-        /*NavigationView navigationView2 = (NavigationView) findViewById(R.id.nav_register);
-        navigationView2.setNavigationItemSelectedListener(this);*/
+
 
 
         //createExampleShelves();
@@ -111,6 +110,7 @@ public class UsersActivity extends AppCompatActivity
 
         if (recomGroups.size() == 0) {
             createAllBooksRecomGroup();
+            //createMan2030RecomGroup();
             writeToFiles();
         }
 
@@ -118,6 +118,10 @@ public class UsersActivity extends AppCompatActivity
 
 
     }
+
+    /*public UsersActivity getUA(){
+        return this;
+    }*/
 
 
     private void createShelvesForUser() {
@@ -231,6 +235,103 @@ public class UsersActivity extends AppCompatActivity
                 rg.addUser(u);
             recomGroups.add(rg);
         }
+    }
+
+
+
+    private void createMan2030RecomGroup() {
+
+
+        RecomGroup rg = new RecomGroup();
+        rg.setName("Hasonló korú férfiak kedvencei:");
+
+
+        for (int i = 1; i < ALL_BOOKS + 1; i++) {
+            try {
+                InputStream in = this.getAssets().open("book" + Integer.toString(i) + ".txt");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String title = reader.readLine();
+                String author = reader.readLine();
+                int released = Integer.parseInt(reader.readLine());
+                String publisher = reader.readLine();
+                int price = Integer.parseInt(reader.readLine());
+                ArrayList<String> genres = new ArrayList<>();
+                String line = reader.readLine();
+                while (line != null) {
+                    genres.add(line);
+                    line = reader.readLine();
+                }
+
+                reader.close();
+
+                rg.addBook(new Book(title, author, released, publisher, price, "book" + Integer.toString(i), genres), 0);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        boolean gotIt = false;
+        for (RecomGroup recomGroup : recomGroups)
+            if (recomGroup.getName().equals("Hasonló korú férfiak kedvencei:"))
+                gotIt = true;
+
+        if (!gotIt) {
+            for (User u : users)
+                rg.addUser(u);
+            recomGroups.add(rg);
+        }
+    }
+
+
+    public RecomGroup createAuthorRecomGroups(String writer) {
+
+
+        RecomGroup rg = new RecomGroup();
+        String label =  "Legjobb" + writer + "által írt könyvek";
+        rg.setName(label);
+
+
+        for (int i = 1; i < ALL_BOOKS + 1; i++) {
+            try {
+                InputStream in = this.getAssets().open("book" + Integer.toString(i) + ".txt");
+                BufferedReader reader = new BufferedReader(new InputStreamReader(in));
+                String title = reader.readLine();
+                String author = reader.readLine();
+                int released = Integer.parseInt(reader.readLine());
+                String publisher = reader.readLine();
+                int price = Integer.parseInt(reader.readLine());
+                ArrayList<String> genres = new ArrayList<>();
+                String line = reader.readLine();
+                while (line != null) {
+                    genres.add(line);
+                    line = reader.readLine();
+                }
+
+                reader.close();
+
+                rg.addBook(new Book(title, author, released, publisher, price, "book" + Integer.toString(i), genres), 0);
+
+
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+
+
+        }
+        boolean gotIt = false;
+        for (RecomGroup recomGroup : recomGroups)
+            if (recomGroup.getName().equals(label))
+                gotIt = true;
+
+        if (!gotIt) {
+            for (User u : users)
+                rg.addUser(u);
+            recomGroups.add(rg);
+        }
+        return rg;
     }
 
     @Override
@@ -428,6 +529,11 @@ public class UsersActivity extends AppCompatActivity
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+
+    public static ArrayList<Purchase> GetPurchases(){
+        return purchases;
     }
 
 
